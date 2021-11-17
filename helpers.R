@@ -3,6 +3,14 @@ ds <- read.csv('../cookie_cats.csv')
 A = 'gate_30'
 B = 'gate_40'
 
+# we can immediatly see there is one strong outlier 
+# playing the game unreasonably long
+# we find and exclude it from the analysis
+summary(ds)
+id = ds$userid[ds$sum_gamerounds>4000]
+ds = ds[ds$userid!=id,]
+
+
 AB_result <- function(df,weight1,weight2,weight3,ttest=TRUE,
                        feature='ALL'){
   # new column with weighted sum
@@ -63,3 +71,15 @@ get_groups = function(df,col_name){
 }
 
 
+
+
+get_uplift = function(df,retention){
+  ret1_A = ds[retention][ds['version']=='gate_30']
+  ret1_B = ds[retention][ds['version']=='gate_40']
+  
+  conv_rate_A = sum(ret1_A)/ length(ret1_A)
+  conv_rate_B = sum(ret1_B) / length(ret1_B)
+  
+  uplift <- (conv_rate_B - conv_rate_A)/ conv_rate_A * 100
+  return(uplift) 
+}
