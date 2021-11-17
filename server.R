@@ -53,9 +53,18 @@ shinyServer(function(input, output) {
     w1 <- input$gamesPlayed
     w2 <- input$oneWeight
     w3 <- input$SevenWeight
+    validate(
+      need( (w1+w2+w3) == 1,'The sum of the weights should be one')
+    )
     metric <- input$metric
     ttest <- ifelse(metric=='GAMES' | metric =='ALL', T, F)
-    AB_result(ds, w1,w2,w3,ttest,metric)
+    pvalue <- AB_result(ds, w1,w2,w3,ttest,metric)
+    if (pvalue < 0.05) {
+      text <- paste0('It is better to move the gate to level 40 (p=', round(pvalue,2), ')')
+    } else {
+      text <- paste0('It is better to keep the gate in level 30 (p=', round(pvalue,2), ')')
+    }
+    text
   })
 
 })

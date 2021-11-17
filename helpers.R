@@ -6,7 +6,11 @@ B = 'gate_40'
 AB_result <- function(df,weight1,weight2,weight3,ttest=TRUE,
                        feature='ALL'){
   # new column with weighted sum
-  df['weighted_value'] = weight1 * df[,3] + weight2 * df[,4] + weight3 * df[,5]
+  max_gamerounds <- max(df$sum_gamerounds)
+  min_gamerounds <- min(df$sum_gamerounds)
+  
+  df['weighted_value'] = weight1 * (df$sum_gamerounds-min_gamerounds)/(max_gamerounds-min_gamerounds) +
+    weight2 * df[,4] + weight3 * df[,5]
   
   # split according to A/B groups and selected feature
   if (feature == 'ALL') {
@@ -24,7 +28,7 @@ AB_result <- function(df,weight1,weight2,weight3,ttest=TRUE,
   }
   
   if (ttest){
-    test = t.test(control,treatment)
+    test = wilcox.test(control,treatment)
   }
   else{
     test = prop.test(x = c(sum(control), sum(treatment)),
