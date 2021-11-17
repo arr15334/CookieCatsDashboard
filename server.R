@@ -43,7 +43,7 @@ shinyServer(function(input, output) {
     coul <- brewer.pal(3, "Pastel2") 
     ggplot(data = p_df) +
       geom_col(aes(x = group, y = value, fill = retention)) +
-      theme_void() +
+      theme_minimal() +
       geom_text(aes(x = group, y = value, label = value, group = retention),
                 position = position_stack(vjust = .5))
     
@@ -60,11 +60,33 @@ shinyServer(function(input, output) {
     ttest <- ifelse(metric=='GAMES' | metric =='ALL', T, F)
     pvalue <- AB_result(ds, w1,w2,w3,ttest,metric)
     if (pvalue < 0.05) {
-      text <- paste0('It is better to move the gate to level 40 (p=', round(pvalue,2), ')')
+      text <- paste0('There is a significant difference between the groups (p=',
+                     round(pvalue,2), ')')
     } else {
-      text <- paste0('It is better to keep the gate in level 30 (p=', round(pvalue,2), ')')
+      text <- paste0('There is no significant difference (p=', round(pvalue,2), ')')
     }
     text
+  })
+  
+  output$upliftone <- renderValueBox({
+    uplift <- get_uplift(ds, 'retention_1')
+    valueBoxColor <- ifelse(uplift >= 0, 'green', 'red')
+    uplift <- paste0(round(uplift, 2), '%')
+    valueBox(uplift, 'Uplift one-day retention', icon = icon('thumbs-down'), color=valueBoxColor)
+  })
+  
+  output$upliftseven <- renderValueBox({
+    uplift <- get_uplift(ds, 'retention_7')
+    valueBoxColor <- ifelse(uplift >= 0, 'green', 'red')
+    uplift <- paste0(round(uplift, 2), '%')
+    valueBox(uplift, 'Uplift seven-day retention', icon = icon('thumbs-down'), color=valueBoxColor)
+  })
+  
+  output$upliftgames <- renderValueBox({
+    uplift <- get_uplift(ds, 'sum_gamerounds')
+    valueBoxColor <- ifelse(uplift >= 0, 'green', 'red')
+    uplift <- paste0(round(uplift, 2), '%')
+    valueBox("-0.2%", 'Uplift games played per user', icon = icon('thumbs-up'), color='yellow')
   })
 
 })

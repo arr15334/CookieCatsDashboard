@@ -36,7 +36,10 @@ shinyUI(
                     numericInput('SevenWeight', 'Seven-day', value=0.33, min = 0, max=1, step=0.05),
                     numericInput('gamesPlayed', 'Games Played', value=0.34, min = 0, max=1, step=0.05)),
                   box(title='Result', width=12, status='primary',
-                      textOutput('abresult'))
+                      textOutput('abresult')),
+                  valueBoxOutput('upliftone'),
+                  valueBoxOutput('upliftseven'),
+                  valueBoxOutput('upliftgames')
                 )
                 )
       )
