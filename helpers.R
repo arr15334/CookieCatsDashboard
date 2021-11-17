@@ -1,5 +1,8 @@
 ds <- read.csv('../cookie_cats.csv')
 
+A = 'gate_30'
+B = 'gate_40'
+
 AB_result <- function(df,weight1,weight2,weight3,ttest=TRUE,
                        feature='ALL'){
   # new column with weighted sum
@@ -7,17 +10,17 @@ AB_result <- function(df,weight1,weight2,weight3,ttest=TRUE,
   
   # split according to A/B groups and selected feature
   if (feature == 'ALL') {
-    control   = df['weighted_value'][df['version']=='gate_30']
-    treatment = df['weighted_value'][df['version']=='gate_40']
+    control   = df['weighted_value'][df['version']==A]
+    treatment = df['weighted_value'][df['version']==B]
   } else if (toupper(feature) == 'ONEDAY') {
-    control   = df['retention_1'][df['version']=='gate_30']
-    treatment = df['retention_1'][df['version']=='gate_40']
+    control   = df['retention_1'][df['version']==A]
+    treatment = df['retention_1'][df['version']==B]
   } else if (toupper(feature) == 'SEVENDAY') {
-    control   = df['retention_7'][df['version']=='gate_30']
-    treatment = df['retention_7'][df['version']=='gate_40']
+    control   = df['retention_7'][df['version']==A]
+    treatment = df['retention_7'][df['version']==B]
   } else {
-    control   = df['sum_gamerounds'][df['version']=='gate_30']
-    treatment = df['sum_gamerounds'][df['version']=='gate_40']
+    control   = df['sum_gamerounds'][df['version']==A]
+    treatment = df['sum_gamerounds'][df['version']==B]
   }
   
   if (ttest){
@@ -33,11 +36,11 @@ AB_result <- function(df,weight1,weight2,weight3,ttest=TRUE,
 
 get_retention_df <- function(oneday=T) {
   if (oneday) {
-    control   = ds['retention_1'][ds['version']=='gate_30']
-    treatment = ds['retention_1'][ds['version']=='gate_40']
+    control   = ds['retention_1'][ds['version']==A]
+    treatment = ds['retention_1'][ds['version']==B]
   } else {
-    control   = ds['retention_7'][ds['version']=='gate_30']
-    treatment = ds['retention_7'][ds['version']=='gate_40']
+    control   = ds['retention_7'][ds['version']==A]
+    treatment = ds['retention_7'][ds['version']==B]
   }
     p_df <- data.frame(list(group=c('Control', 'Control', 'Treatment', 'Treatment'),
                             retention=c('Yes', 'No', 'Yes', 'No'),
@@ -48,3 +51,11 @@ get_retention_df <- function(oneday=T) {
     p_df[4,3] <- 100 - p_df[3,3]
     return(p_df)
 }
+
+get_groups = function(df,col_name){
+  group_A = df[df['version']==A][col_name]
+  group_B = df[df['version']==B][col_name]
+  return(c(group_A,group_B))
+}
+
+
