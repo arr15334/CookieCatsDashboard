@@ -1,4 +1,4 @@
-ds <- read.csv('../cookie_cats.csv')
+ds <- read.csv('./cookie_cats.csv')
 #ds <- load('ds.RData')
 
 A = 'gate_30'
@@ -87,7 +87,7 @@ get_uplift = function(df,retention){
   return(uplift) 
 }
 
-retention_games <- function(maxGames) {
+retention_games <- function(maxGames, retention) {
   x <- maxGames
   y.control <- vector()
   n.control <- vector()
@@ -95,11 +95,20 @@ retention_games <- function(maxGames) {
   n.treatment <- vector()
   control <- ds[ds$version == A,]
   treatment <- ds[ds$version ==B,]
-  for (i in 1:x) {
-    y.control[i] <- mean(control$retention_7[control$sum_gamerounds > i])
-    n.control[i] <- nrow(control[control$sum_gamerounds > i,])
-    y.treatment[i] <- mean(treatment$retention_7[treatment$sum_gamerounds > i])
-    n.treatment[i] <- nrow(treatment[treatment$sum_gamerounds > i,])
+  if (retention =='ONEDAY') {
+    for (i in 1:x) {
+      y.control[i] <- mean(control$retention_1[control$sum_gamerounds > i])
+      n.control[i] <- nrow(control[control$sum_gamerounds > i,])
+      y.treatment[i] <- mean(treatment$retention_1[treatment$sum_gamerounds > i])
+      n.treatment[i] <- nrow(treatment[treatment$sum_gamerounds > i,])
+    }
+  } else {
+    for (i in 1:x) {
+      y.control[i] <- mean(control$retention_7[control$sum_gamerounds > i])
+      n.control[i] <- nrow(control[control$sum_gamerounds > i,])
+      y.treatment[i] <- mean(treatment$retention_7[treatment$sum_gamerounds > i])
+      n.treatment[i] <- nrow(treatment[treatment$sum_gamerounds > i,])
+    }
   }
   rg <- data.frame(control = y.control, treatment = y.treatment,
                    ncontrol = n.control, ntreatment = n.treatment)

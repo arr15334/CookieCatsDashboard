@@ -90,20 +90,25 @@ shinyServer(function(input, output) {
   })
   
   output$retentionGamesControl <- renderPlot({
+    retType <- input$retType
     maxGames <- input$maxGames
-    ret <- retention_games(maxGames)
+    ret <- retention_games(maxGames, retType)
     ggplot(ret, aes(x=1:nrow(ret), y=control, color=ncontrol)) +
-    theme_minimal() +
-    geom_point()
+      ggtitle('Comparing retention % with maximum number of games played') +
+      theme_minimal() +
+      labs(y='Retention', x='Max games played') +
+      geom_point()
     #plot(ret$control, xlab = 'Number of games', ylab='retention')
   })
   
   output$retentionGamesTreatment <- renderPlot({
+    retType <- input$retType
     maxGames <- input$maxGames
-    ret <- retention_games(maxGames)
+    ret <- retention_games(maxGames, retType)
     #plot(ret$treatment, xlab = 'Number of games', ylab='retention')
     ggplot(ret, aes(x=1:nrow(ret), y=treatment, color=ntreatment)) +
       theme_minimal() +
+      labs(y='Retention', x='Max games played') +
       geom_point()
   })
   

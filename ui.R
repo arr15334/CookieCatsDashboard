@@ -16,7 +16,7 @@ shinyUI(
       tabItems(
         tabItem('summary',
                 fluidRow(
-                  box(title='User split', plotOutput('usersplit')),
+                  box(title='User split', withSpinner(plotOutput('usersplit')) ),
                   box(title = 'User retention',
                       switchInput(inputId='retType',
                                   onLabel='1-day', offLabel='7-day', value=T),
