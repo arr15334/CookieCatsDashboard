@@ -21,9 +21,11 @@ shinyUI(
                       switchInput(inputId='retType',
                                   onLabel='1-day', offLabel='7-day', value=T),
                       withSpinner(plotOutput('onedayret'))),
-                  box(title = 'Retention rate vs games played',
-                      #sliderInput('maxGames', 'Maximum number of games', value=1000),
-                      plotOutput('retentionGames'))
+                  box(title = 'Retention rate vs games played', width=12,
+                      sliderInput('maxGames', 'Maximum number of games', value=1000, min=1000, max=4000, step=500),
+                      withSpinner(plotOutput('retentionGamesControl')),
+                      withSpinner(plotOutput('retentionGamesTreatment'))
+                      )
                 )),
         tabItem('abtest',
                 fluidRow(
@@ -39,7 +41,8 @@ shinyUI(
                     numericInput('SevenWeight', 'Seven-day', value=0.33, min = 0, max=1, step=0.05),
                     numericInput('gamesPlayed', 'Games Played', value=0.34, min = 0, max=1, step=0.05)),
                   box(title='Result', width=12, status='primary',
-                      textOutput('abresult')),
+                      textOutput('abresult'),
+                      tableOutput('confInt')),
                   valueBoxOutput('upliftone'),
                   valueBoxOutput('upliftseven'),
                   valueBoxOutput('upliftgames')

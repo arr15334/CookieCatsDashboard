@@ -1,4 +1,5 @@
 ds <- read.csv('../cookie_cats.csv')
+#ds <- load('ds.RData')
 
 A = 'gate_30'
 B = 'gate_40'
@@ -88,10 +89,53 @@ get_uplift = function(df,retention){
 
 retention_games <- function(maxGames) {
   x <- maxGames
-  y <- vector()
+  y.control <- vector()
+  n.control <- vector()
+  y.treatment <- vector()
+  n.treatment <- vector()
+  control <- ds[ds$version == A,]
+  treatment <- ds[ds$version ==B,]
   for (i in 1:x) {
-    y[i] <- mean(ds$retention_7[ds$sum_gamerounds > i])
+    y.control[i] <- mean(control$retention_7[control$sum_gamerounds > i])
+    n.control[i] <- nrow(control[control$sum_gamerounds > i,])
+    y.treatment[i] <- mean(treatment$retention_7[treatment$sum_gamerounds > i])
+    n.treatment[i] <- nrow(treatment[treatment$sum_gamerounds > i,])
   }
-  return(y)
+  rg <- data.frame(control = y.control, treatment = y.treatment,
+                   ncontrol = n.control, ntreatment = n.treatment)
+  return(rg)
+}
+
+get_confint <- function(variable){
+  # Argument: Insert variable name of choice (either retention_1 or retention_7)
+  library(tidyverse) # Import Tidyverse here, in case not imported some other place. 
+  
+  if (variable =='retention_1') {
+    conversion_subset_control <- ds %>% filter(version == "gate_30" & retention_1 == 1)
+    conversion_subset_treat <- ds %>% filter(version == "gate_40" & retention_1 == 1)
+  } else {
+    conversion_subset_control <- ds %>% filter(version == "gate_30" & retention_7 == 1)
+    conversion_subset_treat <- ds %>% filter(version == "gate_40" & retention_7 == 1)
+  }
+  conversions_control <- nrow(conversion_subset_control)
+  users_control <- nrow(ds %>% filter(version == "gate_30"))
+  conv_rate_control <-  (conversions_control/users_control)
+  
+  conversions_treat <- nrow(conversion_subset_treat)
+  users_treat <- nrow(ds %>% filter(version == "gate_40"))
+  conv_rate_treat <-  (conversions_treat/users_treat)
+  
+  # Compute CIs.
+  # c(-qnorm(.975), qnorm(.975))    #95% confidence interval
+  X_hat_treat <- conversions_treat/users_treat
+  se_hat_treat <- sqrt(X_hat_treat*(1-X_hat_treat)/users_treat)
+  
+  X_hat_control <- conversions_control/users_control
+  se_hat_control <- sqrt(X_hat_control*(1-X_hat_control)/users_control)
+  
+  ci_treat <- c(X_hat_treat - qnorm(0.975)*se_hat_treat, X_hat_treat + qnorm(0.975)*se_hat_treat)
+  ci_control <- c(X_hat_control - qnorm(0.975)*se_hat_control, X_hat_control + qnorm(0.975)*se_hat_control)
+  
+  return(cbind(ci_treat, ci_control))
 }
 

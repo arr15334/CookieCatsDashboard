@@ -88,5 +88,36 @@ shinyServer(function(input, output) {
     uplift <- paste0(round(uplift, 2), '%')
     valueBox("-0.2%", 'Uplift games played per user', icon = icon('users'), color='yellow')
   })
+  
+  output$retentionGamesControl <- renderPlot({
+    maxGames <- input$maxGames
+    ret <- retention_games(maxGames)
+    ggplot(ret, aes(x=1:nrow(ret), y=control, color=ncontrol)) +
+    theme_minimal() +
+    geom_point()
+    #plot(ret$control, xlab = 'Number of games', ylab='retention')
+  })
+  
+  output$retentionGamesTreatment <- renderPlot({
+    maxGames <- input$maxGames
+    ret <- retention_games(maxGames)
+    #plot(ret$treatment, xlab = 'Number of games', ylab='retention')
+    ggplot(ret, aes(x=1:nrow(ret), y=treatment, color=ntreatment)) +
+      theme_minimal() +
+      geom_point()
+  })
+  
+  output$confInt <- renderTable({
+    metric <- input$metric
+    if (metric =='ONEDAY') {
+      ci <- get_confint('retention_1')
+    } else if (metric == 'SEVENDAY') {
+      ci <- get_confint('retention_7')
+    } else {
+      return(NULL)
+    }
+    ci <- as.data.frame(ci)
+    ci
+  })
 
 })
