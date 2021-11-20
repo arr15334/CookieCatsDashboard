@@ -11,7 +11,7 @@ id = ds$userid[ds$sum_gamerounds>4000]
 ds = ds[ds$userid!=id,]
 
 
-AB_result <- function(df,weight1,weight2,weight3,ttest=TRUE,
+AB_result <- function(df,weight1,weight2,weight3,wilcox=TRUE,
                        feature='ALL'){
   # new column with weighted sum
   max_gamerounds <- max(df$sum_gamerounds)
@@ -35,8 +35,8 @@ AB_result <- function(df,weight1,weight2,weight3,ttest=TRUE,
     treatment = df['sum_gamerounds'][df['version']==B]
   }
   
-  if (ttest){
-    test = wilcox.test(control,treatment)
+  if (wilcox){
+    test = wilcox.test(control,treatment,conf.int=TRUE)
   }
   else{
     test = prop.test(x = c(sum(control), sum(treatment)),
@@ -44,6 +44,8 @@ AB_result <- function(df,weight1,weight2,weight3,ttest=TRUE,
   }
   
   return(test$p.value)
+  # or:
+  #return(test) # and afterwards access test$p-value test$conf.int
 }
 
 get_retention_df <- function(oneday=T) {
@@ -92,3 +94,4 @@ retention_games <- function(maxGames) {
   }
   return(y)
 }
+
