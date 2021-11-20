@@ -20,7 +20,10 @@ shinyUI(
                   box(title = 'User retention',
                       switchInput(inputId='retType',
                                   onLabel='1-day', offLabel='7-day', value=T),
-                      withSpinner(plotOutput('onedayret')))
+                      withSpinner(plotOutput('onedayret'))),
+                  box(title = 'Retention rate vs games played',
+                      #sliderInput('maxGames', 'Maximum number of games', value=1000),
+                      plotOutput('retentionGames'))
                 )),
         tabItem('abtest',
                 fluidRow(

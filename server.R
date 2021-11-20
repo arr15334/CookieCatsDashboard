@@ -70,14 +70,14 @@ shinyServer(function(input, output) {
   
   output$upliftone <- renderValueBox({
     uplift <- get_uplift(ds, 'retention_1')
-    valueBoxColor <- ifelse(uplift >= 0, 'green', 'red')
+    valueBoxColor <- ifelse(uplift > -3, 'yellow', 'red')
     uplift <- paste0(round(uplift, 2), '%')
-    valueBox(uplift, 'Uplift one-day retention', icon = icon('thumbs-down'), color=valueBoxColor)
+    valueBox(uplift, 'Uplift one-day retention', icon = icon('users'), color=valueBoxColor)
   })
   
   output$upliftseven <- renderValueBox({
     uplift <- get_uplift(ds, 'retention_7')
-    valueBoxColor <- ifelse(uplift >= 0, 'green', 'red')
+    valueBoxColor <- ifelse(uplift > -3, 'yellow', 'red')
     uplift <- paste0(round(uplift, 2), '%')
     valueBox(uplift, 'Uplift seven-day retention', icon = icon('thumbs-down'), color=valueBoxColor)
   })
@@ -86,7 +86,7 @@ shinyServer(function(input, output) {
     uplift <- get_uplift(ds, 'sum_gamerounds')
     valueBoxColor <- ifelse(uplift >= 0, 'green', 'red')
     uplift <- paste0(round(uplift, 2), '%')
-    valueBox("-0.2%", 'Uplift games played per user', icon = icon('thumbs-up'), color='yellow')
+    valueBox("-0.2%", 'Uplift games played per user', icon = icon('users'), color='yellow')
   })
 
 })

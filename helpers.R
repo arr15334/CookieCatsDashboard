@@ -83,3 +83,12 @@ get_uplift = function(df,retention){
   uplift <- (conv_rate_B - conv_rate_A)/ conv_rate_A * 100
   return(uplift) 
 }
+
+retention_games <- function(maxGames) {
+  x <- maxGames
+  y <- vector()
+  for (i in 1:x) {
+    y[i] <- mean(ds$retention_7[ds$sum_gamerounds > i])
+  }
+  return(y)
+}
