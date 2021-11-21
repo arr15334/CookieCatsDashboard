@@ -89,10 +89,14 @@ shinyServer(function(input, output) {
     valueBox("-0.2%", 'Uplift games played per user', icon = icon('users'), color='yellow')
   })
   
-  output$retentionGamesControl <- renderPlot({
+  ret_df <- reactive({
     retType <- input$retType
     maxGames <- input$maxGames
-    ret <- retention_games(maxGames, retType)
+    retention_games(maxGames, retType)
+  })
+  
+  output$retentionGamesControl <- renderPlot({
+    ret <- ret_df()
     ggplot(ret, aes(x=1:nrow(ret), y=control, color=ncontrol)) +
       ggtitle('Comparing retention % with maximum number of games played') +
       theme_minimal() +
@@ -102,10 +106,7 @@ shinyServer(function(input, output) {
   })
   
   output$retentionGamesTreatment <- renderPlot({
-    retType <- input$retType
-    maxGames <- input$maxGames
-    ret <- retention_games(maxGames, retType)
-    #plot(ret$treatment, xlab = 'Number of games', ylab='retention')
+    ret <- ret_df()
     ggplot(ret, aes(x=1:nrow(ret), y=treatment, color=ntreatment)) +
       theme_minimal() +
       labs(y='Retention', x='Max games played') +
